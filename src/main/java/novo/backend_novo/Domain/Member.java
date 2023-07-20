@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import static novo.backend_novo.Domain.Authority.ROLE_USER;
 
-@Getter @Setter
+@Entity @Getter
 @NoArgsConstructor
 public class Member {
 
@@ -20,20 +20,17 @@ public class Member {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Authority authority; //default = user
+    private Authority authority = ROLE_USER; //default = user
 
-    @Builder
-    public Member (String name, String email, String password){
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.authority =  ROLE_USER;
-    }
     @Builder
     public Member (String name, String email, String password, Authority authority){
         this.name = name;
         this.email = email;
         this.password = password;
         this.authority =  authority;
+    }
+
+    public void updateInfo(String name) {
+        this.name = name;
     }
 }
