@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import novo.backend_novo.DTO.ContentDTO;
 
 import java.time.LocalDate;
+
+import static novo.backend_novo.DTO.ContentDTO.*;
 
 @Entity @Getter
 @NoArgsConstructor
@@ -22,15 +25,13 @@ public class Content {
     private LocalDate publishedAt; //출판일자
     private String genre; //장르
     private String keyword; //키워드(','기준으로 저장)
-    @Enumerated(EnumType.STRING)
-    private AgeRating ageRating; //나이제한
-    @Enumerated(EnumType.STRING)
-    private Platform platform; //연재 플랫폼
+    private String ageRating; //나이제한
+    private String platform; //연재 플랫폼
 
     @Builder
     public Content( String title, String writer, String introduction,
                     String price, String serialDay, LocalDate publishedAt,
-                    String genre, String keyword, AgeRating ageRating, Platform platform) {
+                    String genre, String keyword, String ageRating, String platform) {
         this.title = title;
         this.writer = writer;
         this.introduction = introduction;
@@ -41,5 +42,18 @@ public class Content {
         this.keyword = keyword;
         this.ageRating = ageRating;
         this.platform = platform;
+    }
+
+    public void updateInfo(UpdateRequest request) {
+        this.title = request.getTitle();
+        this.writer = request.getWriter();
+        this.introduction = request.getIntroduction();
+        this.price = request.getPrice();
+        this.serialDay = request.getSerialDay();
+        this.publishedAt = request.getPublishedAt();
+        this.genre = request.getGenre();
+        this.keyword = request.getKeyword().toString();
+        this.ageRating = request.getAgeRating();
+        this.platform = request.getPlatform();
     }
 }
