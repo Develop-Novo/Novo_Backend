@@ -26,7 +26,7 @@ public class Content {
     private String keyword; //키워드(','기준으로 저장)
     private String ageRating; //나이제한
     private String platform; //연재 플랫폼
-    private int rating = 0; //평점
+    private float rating = 0; //평점
 
     @Builder
     public Content( String title, String writer, String introduction,

@@ -60,7 +60,7 @@ public class ContentDTO {
         private List<String> keyword;
         private String ageRating;
         private String platform;
-        private int rating;
+        private float rating;
 
         public static InfoResponse of(Content content){
             List<String> keywords = Arrays.asList(content.getKeyword().split(","));
