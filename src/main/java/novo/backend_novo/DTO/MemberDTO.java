@@ -8,6 +8,7 @@ import novo.backend_novo.Domain.Member;
 
 public class MemberDTO {
     @Getter @Setter
+    @Builder
     public static class JoinRequest {
         private String name;
         @NotEmpty(message = "이메일을 입력하세요.") @Email(message = "이메일 형식이 올바르지 않습니다.")
@@ -18,6 +19,7 @@ public class MemberDTO {
     }
 
     @Getter @Setter
+    @Builder
     public static class loginRequest {
         @NotEmpty(message = "이메일을 입력하세요.") @Email(message = "이메일 형식이 올바르지 않습니다.")
         private String email;
@@ -26,6 +28,7 @@ public class MemberDTO {
     }
 
     @Getter @Setter
+    @Builder
     public static class UpdateRequest{
         @NotEmpty(message = "이름을 입력하세요.")
         private String name;
