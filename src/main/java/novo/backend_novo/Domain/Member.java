@@ -26,9 +26,7 @@ public class Member {
     private String password;
     @CreationTimestamp
     private Timestamp createdAt;
-
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ROLE_USER")
     private Authority authority;
 
     @Builder

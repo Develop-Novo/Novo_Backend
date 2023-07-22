@@ -14,7 +14,7 @@ public class MemberDTO {
         private String email;
         @NotEmpty(message = "비밀번호를 입력하세요.")
         private String password;
-        private Authority authority = Authority.ROLE_USER;
+        private Authority authority=Authority.ROLE_USER;
     }
 
     @Getter @Setter
