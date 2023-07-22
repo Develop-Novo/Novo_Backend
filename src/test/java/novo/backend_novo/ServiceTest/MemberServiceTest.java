@@ -23,11 +23,7 @@ public class MemberServiceTest {
     @Test
     void join_and_findById(){
         //given
-        Member member = Member.builder()
-                .name("name")
-                .email("email@gmail.com")
-                .password("password")
-                .build();
+        Member member = getMember("name","email@gmail.com","password");
         //when
         IdResponse idResponse = memberService.join(member);
         //then
@@ -53,7 +49,6 @@ public class MemberServiceTest {
         memberService.join(member1);
         memberService.join(member2);
         memberService.join(member3);
-
         //when
         List<InfoResponse> memberInfoList = memberService.getAllMembers();
         //then
