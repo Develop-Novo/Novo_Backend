@@ -5,8 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 import static novo.backend_novo.Domain.Authority.ROLE_USER;
+
+
 
 @Entity @Getter
 @NoArgsConstructor
@@ -18,9 +24,12 @@ public class Member {
     private String name;
     private String email;
     private String password;
+    @CreationTimestamp
+    private Timestamp createdAt;
 
     @Enumerated(EnumType.STRING)
-    private Authority authority = ROLE_USER; //default = user
+    @Column(columnDefinition = "ROLE_USER")
+    private Authority authority;
 
     @Builder
     public Member (String name, String email, String password, Authority authority){

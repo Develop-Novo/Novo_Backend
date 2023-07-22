@@ -2,7 +2,6 @@ package novo.backend_novo.Controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import novo.backend_novo.Domain.Authority;
 import novo.backend_novo.Domain.Member;
 import novo.backend_novo.Response.BasicResponse;
 import novo.backend_novo.Response.CommonResponse;
@@ -31,7 +30,7 @@ public class MemberController {
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(request.getPassword())
-                .authority(Authority.ROLE_USER)
+                .authority(request.getAuthority())
                 .build();
 
         return ResponseEntity.ok()
