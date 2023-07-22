@@ -1,10 +1,7 @@
 package novo.backend_novo.DTO;
 
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import novo.backend_novo.Domain.Content;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -15,6 +12,7 @@ import java.util.List;
 public class ContentDTO {
 
     @Getter @Setter
+    @Builder
     public static class SaveRequest{
         @NotEmpty
         private String title;
@@ -31,6 +29,7 @@ public class ContentDTO {
     }
 
     @Getter @Setter
+    @Builder
     public static class UpdateRequest{
         private String title;
         private String writer;
