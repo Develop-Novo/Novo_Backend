@@ -60,13 +60,14 @@ public class ContentDTO {
         private List<String> keyword;
         private String ageRating;
         private String platform;
+        private int rating;
 
         public static InfoResponse of(Content content){
             List<String> keywords = Arrays.asList(content.getKeyword().split(","));
 
             return new InfoResponse(content.getId(),content.getTitle(), content.getWriter(), content.getIntroduction(),
                     content.getPrice(), content.getSerialDay(), content.getPublishedAt(), content.getGenre(), keywords,
-                    content.getAgeRating(), content.getPlatform());
+                    content.getAgeRating(), content.getPlatform(), content.getRating());
         }
     }
 }
