@@ -53,7 +53,7 @@ public class StarController {
             @RequestBody @Valid UpdateRequest request,
             @PathVariable("star-id") Long starId
     ){
-        starService.update(starId, request.getStar());
+        starService.update(starId, (float)request.getStar());
         return ResponseEntity.ok().build();
     }
 

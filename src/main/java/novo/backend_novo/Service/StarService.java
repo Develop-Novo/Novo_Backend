@@ -46,7 +46,7 @@ public class StarService {
         Content content = contentRepository.findById(request.getContentId())
                         .orElseThrow(()-> new IllegalArgumentException("작품 id가 올바르지 않습니다."));
         Star star = Star.builder()
-                .star(request.getStar())
+                .star((float)request.getStar())
                 .member(member)
                 .content(content)
                 .build();
@@ -71,7 +71,7 @@ public class StarService {
 
     //평점 수정
     @Transactional
-    public void update(Long id, int modifyStar){
+    public void update(Long id, float modifyStar){
         Star star = starRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("평점 id 정보가 올바르지 않습니다."));
         star.updateStar(modifyStar);

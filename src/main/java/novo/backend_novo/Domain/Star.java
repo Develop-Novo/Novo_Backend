@@ -23,16 +23,16 @@ public class Star {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private int star;
+    private float star;
 
     @Builder
-    public Star(Content content, Member member, int star) {
+    public Star(Content content, Member member, float star) {
         this.content = content;
         this.member = member;
         this.star = star;
     }
 
-    public void updateStar(int modifyStar) {
+    public void updateStar(float modifyStar) {
         this.star = modifyStar;
     }
 }

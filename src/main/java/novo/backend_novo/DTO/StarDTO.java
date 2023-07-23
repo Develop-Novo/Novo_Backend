@@ -1,6 +1,6 @@
 package novo.backend_novo.DTO;
 
-import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -18,11 +18,11 @@ public class StarDTO {
         private Long memberId;
         @NotNull
         private Long contentId;
-        @NotNull @Positive @DecimalMax(value = "10")
-        private int star;
+        @NotNull @Positive @Max(value = 10)
+        private float star;
 
         @Builder
-        public SaveRequest(Long memberId, Long contentId, int star) {
+        public SaveRequest(Long memberId, Long contentId, float star) {
             this.memberId = memberId;
             this.contentId = contentId;
             this.star = star;
@@ -32,8 +32,13 @@ public class StarDTO {
     @Getter
     @NoArgsConstructor
     public static class UpdateRequest{
-        @NotNull @Positive @DecimalMax(value = "10")
-        private int star;
+        @NotNull @Positive @Max(value = 10)
+        private float star;
+
+        @Builder
+        public UpdateRequest(float star) {
+            this.star = star;
+        }
     }
 
     @Getter
@@ -43,7 +48,7 @@ public class StarDTO {
         private Long id;
         private Long memberId;
         private Long contentId;
-        private int star;
+        private float star;
 
         public static InfoResponse of(Star star) {
             return new InfoResponse(star.getId(), star.getMember().getId(), star.getContent().getId(), star.getStar());
