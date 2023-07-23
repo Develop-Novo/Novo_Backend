@@ -2,7 +2,9 @@ package novo.backend_novo.Service;
 
 import lombok.RequiredArgsConstructor;
 import novo.backend_novo.Domain.Content;
+import novo.backend_novo.Domain.Star;
 import novo.backend_novo.Repository.ContentRepository;
+import novo.backend_novo.Repository.StarRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ import static novo.backend_novo.DTO.ContentDTO.*;
 @RequiredArgsConstructor
 public class ContentService {
     private final ContentRepository contentRepository;
+    private final StarRepository starRepository;
 
     //작품 저장하기
     @Transactional
@@ -58,6 +61,13 @@ public class ContentService {
     public void removeContent(Long id){
         Content content = contentRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("작품 id가 올바르지 않습니다."));
+
+        List<Star> relatedStar = starRepository.findByContentId(id);
+        for(int i=0; i<relatedStar.size(); i++){
+            starRepository.delete(relatedStar.get(i));
+        }
+
         contentRepository.delete(content);
+
     }
 }

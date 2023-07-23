@@ -44,6 +44,10 @@ public class Content {
         this.platform = platform;
     }
 
+    public void updateRating(float newRating){
+        this.rating = newRating;
+    }
+
     public void updateInfo(UpdateRequest request) {
         this.title = request.getTitle();
         this.writer = request.getWriter();
