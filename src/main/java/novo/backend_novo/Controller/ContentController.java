@@ -27,9 +27,10 @@ public class ContentController {
             @RequestBody @Valid SaveRequest request
     ){
         String keyword = "";
-        for(String key : request.getKeyword())
-            keyword += key+",";
-
+        if(request.getKeyword()!=null) {
+            for (String key : request.getKeyword())
+                keyword += key + ",";
+        }
         Content content = Content.builder()
                 .title(request.getTitle())
                 .writer(request.getWriter())

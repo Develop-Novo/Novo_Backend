@@ -6,13 +6,14 @@ import novo.backend_novo.Domain.Content;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class ContentDTO {
 
-    @Getter @Setter
-    @Builder
+    @Getter
+    @NoArgsConstructor
     public static class SaveRequest{
         @NotEmpty
         private String title;
@@ -26,10 +27,26 @@ public class ContentDTO {
         private List<String> keyword;
         private String ageRating = "전체이용가";
         private String platform;
+
+        @Builder
+        public SaveRequest(String title, String writer, String introduction,
+                           String price, String serialDay, LocalDate publishedAt,
+                           String genre, List<String> keyword, String ageRating, String platform) {
+            this.title = title;
+            this.writer = writer;
+            this.introduction = introduction;
+            this.price = price;
+            this.serialDay = serialDay;
+            this.publishedAt = publishedAt;
+            this.genre = genre;
+            this.keyword = keyword;
+            this.ageRating = ageRating;
+            this.platform = platform;
+        }
     }
 
-    @Getter @Setter
-    @Builder
+    @Getter
+    @NoArgsConstructor
     public static class UpdateRequest{
         private String title;
         private String writer;
@@ -42,6 +59,22 @@ public class ContentDTO {
         private List<String> keyword;
         private String ageRating = "전체이용가";
         private String platform;
+
+        @Builder
+        public UpdateRequest(String title, String writer, String introduction,
+                             String price, String serialDay, LocalDate publishedAt,
+                             String genre, List<String> keyword, String ageRating, String platform) {
+            this.title = title;
+            this.writer = writer;
+            this.introduction = introduction;
+            this.price = price;
+            this.serialDay = serialDay;
+            this.publishedAt = publishedAt;
+            this.genre = genre;
+            this.keyword = keyword;
+            this.ageRating = ageRating;
+            this.platform = platform;
+        }
     }
 
     @Getter
@@ -62,7 +95,10 @@ public class ContentDTO {
         private float rating;
 
         public static InfoResponse of(Content content){
-            List<String> keywords = Arrays.asList(content.getKeyword().split(","));
+            List<String> keywords = new ArrayList<>();
+            if(content.getKeyword()!=null) {
+                keywords = Arrays.asList(content.getKeyword().split(","));
+            }
 
             return new InfoResponse(content.getId(),content.getTitle(), content.getWriter(), content.getIntroduction(),
                     content.getPrice(), content.getSerialDay(), content.getPublishedAt(), content.getGenre(), keywords,
