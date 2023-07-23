@@ -4,15 +4,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
-
-import static novo.backend_novo.Domain.Authority.ROLE_USER;
-
-
 
 @Entity @Getter
 @NoArgsConstructor
