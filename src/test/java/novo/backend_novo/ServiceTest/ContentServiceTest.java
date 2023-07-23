@@ -36,6 +36,7 @@ public class ContentServiceTest {
     @Test
     void findAll(){
         //given
+        List<InfoResponse> initInfoList = contentService.getAllContents();
         Content content1 = getContent("title1","writer","introduction","price","serialDay",
                 LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
         Content content2 = getContent("title2","writer","introduction","price","serialDay",
@@ -48,7 +49,7 @@ public class ContentServiceTest {
         //when
         List<InfoResponse> contentInfoList = contentService.getAllContents();
         //then
-        assertEquals(3,contentInfoList.size());
+        assertEquals(3+initInfoList.size(),contentInfoList.size());
     }
 
     @Test
@@ -75,17 +76,18 @@ public class ContentServiceTest {
     @Test
     void deleteContent(){
         //given
+        List<InfoResponse> initInfoList = contentService.getAllContents();
         Content content1 = getContent("title1","writer","introduction","price","serialDay",
                 LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
         Content content2 = getContent("title2","writer","introduction","price","serialDay",
                 LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
         IdResponse idResponse = contentService.saveContent(content1);
         contentService.saveContent(content2);
-        assertEquals(2, contentService.getAllContents().size());
+        assertEquals(2+initInfoList.size(), contentService.getAllContents().size());
         //when
         contentService.removeContent(idResponse.getId());
         //then
-        assertEquals(1, contentService.getAllContents().size());
+        assertEquals(1+initInfoList.size(), contentService.getAllContents().size());
     }
 
     private Content getContent( String title, String writer, String introduction,

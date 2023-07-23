@@ -43,6 +43,7 @@ public class MemberServiceTest {
     @Test
     void findAll(){
         //given
+        List<InfoResponse> initMemberList = memberService.getAllMembers();
         Member member1 = getMember("name1","email1@gmail.com","password");
         Member member2 = getMember("name2","email2@gmail.com","password");
         Member member3 = getMember("name3","email3@gmail.com","password");
@@ -52,7 +53,7 @@ public class MemberServiceTest {
         //when
         List<InfoResponse> memberInfoList = memberService.getAllMembers();
         //then
-        assertEquals(3, memberInfoList.size());
+        assertEquals(3+initMemberList.size(), memberInfoList.size());
     }
 
     @Test
@@ -69,17 +70,18 @@ public class MemberServiceTest {
     @Test
     void deleteMember(){
         //given
+        List<InfoResponse> initMemberList = memberService.getAllMembers();
         Member member1 = getMember("name1","email1@gmail.com","password");
         Member member2 = getMember("name2","email2@gmail.com","password");
         Member member3 = getMember("name3","email3@gmail.com","password");
         IdResponse idResponse =  memberService.join(member1);
         memberService.join(member2);
         memberService.join(member3);
-        assertEquals(3, memberService.getAllMembers().size());
+        assertEquals(3+initMemberList.size(), memberService.getAllMembers().size());
         //when
         memberService.removeMember(idResponse.getId());
         //then
-        assertEquals(2, memberService.getAllMembers().size());
+        assertEquals(2+initMemberList.size(), memberService.getAllMembers().size());
     }
 
     private Member getMember(String name, String email, String password){
