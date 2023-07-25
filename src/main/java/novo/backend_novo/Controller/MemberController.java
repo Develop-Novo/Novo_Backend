@@ -1,5 +1,7 @@
 package novo.backend_novo.Controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import novo.backend_novo.Domain.Member;
@@ -15,6 +17,7 @@ import static novo.backend_novo.DTO.CommonDTO.*;
 import static novo.backend_novo.DTO.MemberDTO.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Tag(name = "회원", description = "회원 관련 api 입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
@@ -27,6 +30,7 @@ public class MemberController {
     }
 
     /*회원가입*/
+    @Operation(summary = "회원가입")
     @PostMapping(path = "/new",produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> join(
             @RequestBody @Valid JoinRequest request
@@ -43,6 +47,7 @@ public class MemberController {
     }
 
     /*로그인*/
+    @Operation(summary = "로그인")
     @PostMapping(path = "/login",produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> login(
             @RequestBody @Valid loginRequest request
@@ -52,6 +57,7 @@ public class MemberController {
     }
 
     /*id로 회원 조회*/
+    @Operation(summary = "id로 회원 조회")
     @GetMapping(path = "/id/{member-id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> findById(
             @PathVariable("member-id") Long memberId
@@ -61,6 +67,7 @@ public class MemberController {
     }
 
     /*email로 회원 조회*/
+    @Operation(summary = "email로 회원 조회")
     @GetMapping(path = "/email/{email}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> findByEmail(
             @PathVariable("email") String email
@@ -70,6 +77,7 @@ public class MemberController {
     }
 
     /*전체 회원 조회*/
+    @Operation(summary = "전체 회원 조회")
     @GetMapping(path = "/all", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> findAll()
     {
@@ -78,6 +86,7 @@ public class MemberController {
     }
 
     /*회원 정보 수정*/
+    @Operation(summary = "회원 정보 수정")
     @PutMapping(path = "/id/{member-id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> update(
             @PathVariable("member-id") Long memberId,
@@ -88,6 +97,7 @@ public class MemberController {
     }
 
     /*회원 탈퇴*/
+    @Operation(summary = "회원 탈퇴")
     @DeleteMapping(path = "/id/{member-id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> remove(
             @PathVariable("member-id") Long memberId

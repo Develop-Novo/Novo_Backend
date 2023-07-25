@@ -1,5 +1,6 @@
 package novo.backend_novo.Controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import novo.backend_novo.Domain.Content;
@@ -22,6 +23,7 @@ public class ContentController {
     private final ContentService contentService;
 
     /*작품 등록*/
+    @Operation(summary = "소설 등록")
     @PostMapping(path = "/new",produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> save(
             @RequestBody @Valid SaveRequest request
@@ -48,6 +50,7 @@ public class ContentController {
     }
 
     /*작품 정보 id로 조회*/
+    @Operation(summary = "소설 정보 id로 조회")
     @GetMapping(path = "/id/{content-id}",produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> findById(
             @PathVariable("content-id") Long contentId
@@ -57,6 +60,7 @@ public class ContentController {
     }
 
     /*작품 정보 전체 조회*/
+    @Operation(summary = "소설 정보 전체 조회")
     @GetMapping(path = "/all",produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> findAll()
     {
@@ -65,6 +69,7 @@ public class ContentController {
     }
 
     /*작품 수정*/
+    @Operation(summary = "소설 정보 수정")
     @PutMapping(path = "/id/{content-id}",produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> update(
             @PathVariable("content-id") Long contentId,
@@ -75,6 +80,7 @@ public class ContentController {
     }
 
     /*작품 삭제*/
+    @Operation(summary = "소설 삭제")
     @DeleteMapping(path = "/id/{content-id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> remove(
             @PathVariable("content-id") Long contentId
