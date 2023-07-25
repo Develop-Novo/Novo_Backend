@@ -21,6 +21,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class MemberController {
     private final MemberService memberService;
 
+    @GetMapping(path = "/test")
+    public String test(){
+        return "재배포 성공";
+    }
+
     /*회원가입*/
     @PostMapping(path = "/new",produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> join(
