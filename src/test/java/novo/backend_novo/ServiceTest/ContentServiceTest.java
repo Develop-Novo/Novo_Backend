@@ -1,13 +1,14 @@
 package novo.backend_novo.ServiceTest;
 
-import novo.backend_novo.Domain.Content;
 import novo.backend_novo.Service.ContentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,34 +19,47 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 public class ContentServiceTest {
-    @Autowired
-    ContentService contentService;
+    @Autowired ContentService contentService;
+
+    MockMultipartFile image1 = new MockMultipartFile("json", "", "application/json",
+            "{src/main/resources/static/testImg1.jpg}".getBytes());
+    MockMultipartFile image2 = new MockMultipartFile("json", "", "application/json",
+            "{src/main/resources/static/testImg2.jpg}".getBytes());
 
     @Test
-    void save_and_findById(){
+    void save_and_findById() throws IOException {
         //given
-        Content content = getContent("title","writer","introduction","price","serialDay",
-                LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
+        List<String> keywords = new ArrayList<>();
+        keywords.add("keyword1");
+        keywords.add("keyword2");
+        SaveRequest request1 = getContent("title1","writer","introduction","price","serialDay",
+                "publishedAt","genre",keywords,"ageRating","platform");
         //when
-        IdResponse idResponse = contentService.saveContent(content);
+        IdResponse idResponse = contentService.saveContent(request1,image1,image2);
         //then
-        assertEquals(contentService.getContentInfoWithId(idResponse.getId()).getTitle(),"title");
+        assertEquals(contentService.getContentInfoWithId(idResponse.getId()).getTitle(),"title1");
         assertEquals(contentService.getContentInfoWithId(idResponse.getId()).getKeyword().size(),2);
     }
 
-    @Test
-    void findAll(){
+   @Test
+    void findAll() throws IOException {
         //given
         List<InfoResponse> initInfoList = contentService.getAllContents();
-        Content content1 = getContent("title1","writer","introduction","price","serialDay",
-                LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
-        Content content2 = getContent("title2","writer","introduction","price","serialDay",
-                LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
-        Content content3 = getContent("title3","writer","introduction","price","serialDay",
-                LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
-        contentService.saveContent(content1);
-        contentService.saveContent(content2);
-        contentService.saveContent(content3);
+        List<String> keywords = new ArrayList<>();
+        keywords.add("keyword1");
+        keywords.add("keyword2");
+
+        SaveRequest request1 = getContent("title1","writer","introduction","price","serialDay",
+                "publishedAt","genre",keywords,"ageRating","platform");
+        SaveRequest request2 = getContent("title2","writer","introduction","price","serialDay",
+                "publishedAt","genre",keywords,"ageRating","platform");
+        SaveRequest request3 = getContent("title3","writer","introduction","price","serialDay",
+                "publishedAt","genre",keywords,"ageRating","platform");
+
+        contentService.saveContent(request1,image1,image2);
+        contentService.saveContent(request2,image1,image2);
+        contentService.saveContent(request3,image1,image2);
+
         //when
         List<InfoResponse> contentInfoList = contentService.getAllContents();
         //then
@@ -53,17 +67,18 @@ public class ContentServiceTest {
     }
 
     @Test
-    void modifyContentInfo(){
+    void modifyContentInfo() throws IOException {
         //given
-        Content content = getContent("title","writer","introduction","price","serialDay",
-                LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
-        IdResponse idResponse = contentService.saveContent(content);
         List<String> keywords = new ArrayList<>();
+        SaveRequest request1 = getContent("title1","writer","introduction","price","serialDay",
+                "publishedAt","genre",keywords,"ageRating","platform");
+        IdResponse idResponse = contentService.saveContent(request1,image1, image2);
+        List<String> mkeywords = new ArrayList<>();
         keywords.add("key1");
         UpdateRequest request = UpdateRequest.builder()
                 .title("modifyTitle")
                 .genre("modifyGenre")
-                .keyword(keywords)
+                .keyword(mkeywords)
                 .build();
         //when
         contentService.update(idResponse.getId(),request);
@@ -74,15 +89,18 @@ public class ContentServiceTest {
     }
 
     @Test
-    void deleteContent(){
+    void deleteContent() throws IOException {
         //given
         List<InfoResponse> initInfoList = contentService.getAllContents();
-        Content content1 = getContent("title1","writer","introduction","price","serialDay",
-                LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
-        Content content2 = getContent("title2","writer","introduction","price","serialDay",
-                LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
-        IdResponse idResponse = contentService.saveContent(content1);
-        contentService.saveContent(content2);
+        List<String> keywords = new ArrayList<>();
+        keywords.add("keyword1");
+        keywords.add("keyword2");
+        SaveRequest request1 = getContent("title1","writer","introduction","price","serialDay",
+                "publishedAt","genre",keywords,"ageRating","platform");
+        SaveRequest request2 = getContent("title2","writer","introduction","price","serialDay",
+                "publishedAt","genre",keywords,"ageRating","platform");
+        IdResponse idResponse = contentService.saveContent(request1,image1,image2);
+        IdResponse idResponse2 = contentService.saveContent(request2, image1, image2);
         assertEquals(2+initInfoList.size(), contentService.getAllContents().size());
         //when
         contentService.removeContent(idResponse.getId());
@@ -90,10 +108,10 @@ public class ContentServiceTest {
         assertEquals(1+initInfoList.size(), contentService.getAllContents().size());
     }
 
-    private Content getContent( String title, String writer, String introduction,
-                                String price, String serialDay, LocalDate publishedAt,
-                                String genre, String keyword, String ageRating, String platform){
-        return  Content.builder()
+    private SaveRequest getContent( String title, String writer, String introduction,
+                                String price, String serialDay, String publishedAt,
+                                String genre, List<String> keyword, String ageRating, String platform){
+        return  SaveRequest.builder()
                 .title(title)
                 .writer(writer)
                 .introduction(introduction)

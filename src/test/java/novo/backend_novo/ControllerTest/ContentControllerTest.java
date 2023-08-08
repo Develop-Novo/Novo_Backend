@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,12 +80,23 @@ public class ContentControllerTest {
         SaveRequest request = SaveRequest.builder()
                 .title("title").keyword(keywords).genre("fantasy").build();
         String object = toJsonString(request);
-        given(contentService.saveContent(any())).willReturn(new IdResponse(1L));
+        MockMultipartFile json = new MockMultipartFile("request", "jsondata", "application/json",
+                object.getBytes(StandardCharsets.UTF_8));
+
+        MockMultipartFile image1 = new MockMultipartFile("json", "", "application/json",
+                "{src/main/resources/static/testImg1.jpg}".getBytes());
+        MockMultipartFile image2 = new MockMultipartFile("json", "", "application/json",
+                "{src/main/resources/static/testImg2.jpg}".getBytes());
+
+        given(contentService.saveContent(any(),any(),any())).willReturn(new IdResponse(1L));
 
         //when
-        ResultActions actions = mockMvc.perform(post("/content/new")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(object));
+        ResultActions actions = mockMvc.perform(multipart("/content/new")
+                .file(json)
+                .file(image1)
+                .file(image2)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8"));
 
         //then
         actions
@@ -110,7 +123,7 @@ public class ContentControllerTest {
     }
 
     /*작품 정보 전체 조회*/
-    @Test
+   @Test
     @DisplayName("find All")
     void findAll() throws Exception{
         //given

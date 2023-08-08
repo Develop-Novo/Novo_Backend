@@ -7,7 +7,9 @@ import novo.backend_novo.Repository.ContentRepository;
 import novo.backend_novo.Repository.StarRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,10 +28,44 @@ import static novo.backend_novo.DTO.ContentDTO.*;
 public class ContentService {
     private final ContentRepository contentRepository;
     private final StarRepository starRepository;
+    private final ImageService imageService;
 
     //작품 저장하기
     @Transactional
-    public IdResponse saveContent(Content content){
+    public IdResponse saveContent(SaveRequest request, MultipartFile coverImg,
+                                  MultipartFile detailImg) throws IOException {
+        String coverUUID = null;
+        String detailUUID = null;
+        if(!coverImg.isEmpty()) {
+            coverUUID = imageService.uploadImage(coverImg);
+            coverUUID = imageService.processImage(coverUUID);
+        }
+        if(!detailImg.isEmpty()){
+            detailUUID = imageService.uploadImage(detailImg);
+            detailUUID = imageService.processImage(detailUUID);
+        }
+
+        String keyword = "";
+        if(request.getKeyword()!=null) {
+            for (String key : request.getKeyword())
+                keyword += key + ",";
+        }
+        Content content = Content.builder()
+                .title(request.getTitle())
+                .writer(request.getWriter())
+                .introduction(request.getIntroduction())
+                .price(request.getPrice())
+                .serialDay(request.getSerialDay())
+                .publishedAt(request.getPublishedAt())
+                .genre(request.getGenre())
+                .keyword(keyword)
+                .ageRating(request.getAgeRating())
+                .platform(request.getPlatform())
+                .coverImg(coverUUID)
+                .detailImg(detailUUID)
+                .link(request.getLink())
+                .build();
+
         contentRepository.save(content);
         return new IdResponse(content.getId());
     }
@@ -70,4 +106,12 @@ public class ContentService {
         contentRepository.delete(content);
 
     }
+
+    //플랫폼별로 찾기
+    public List getContentInfoWithPlatform(String platform) {
+        return contentRepository.findByPlatform(platform).stream()
+                .map(InfoResponse::of)
+                .collect(Collectors.toList());
+    }
+
 }
