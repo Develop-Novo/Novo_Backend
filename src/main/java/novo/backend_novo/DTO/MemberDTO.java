@@ -60,8 +60,9 @@ public class MemberDTO {
         private Long id;
         private String name;
         private String email;
+        private String profileImg;
         public static InfoResponse of(Member member){
-            return new InfoResponse(member.getId(),member.getName(),member.getEmail());
+            return new InfoResponse(member.getId(),member.getName(),member.getEmail(), member.getImg());
         }
     }
 }

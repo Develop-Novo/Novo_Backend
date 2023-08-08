@@ -18,6 +18,8 @@ public class Member {
     private String name;
     private String email;
     private String password;
+    private String img;
+
     @CreationTimestamp
     private Timestamp createdAt;
     @Enumerated(EnumType.STRING)
@@ -31,7 +33,8 @@ public class Member {
         this.authority =  authority;
     }
 
-    public void updateInfo(String name) {
+    public void updateName(String name) {
         this.name = name;
     }
+    public void updateImg(String img){ this.img = img; }
 }

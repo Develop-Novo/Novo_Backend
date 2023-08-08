@@ -10,7 +10,9 @@ import novo.backend_novo.Response.CommonResponse;
 import novo.backend_novo.Service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static novo.backend_novo.DTO.CommonDTO.*;
@@ -103,6 +105,17 @@ public class MemberController {
             @PathVariable("member-id") Long memberId
     ){
         memberService.removeMember(memberId);
+        return ResponseEntity.ok().build();
+    }
+
+    /*프로필 이미지 추가*/
+    @Operation(summary = "프로필 이미지 추가")
+    @PostMapping(path = "/id/{member-id}/profile")
+    public ResponseEntity<? extends BasicResponse> setProfile(
+            @PathVariable("member-id") Long memberId,
+            @RequestPart(value = "profile") MultipartFile profileImg
+    ) throws IOException {
+        memberService.saveProfile(memberId, profileImg);
         return ResponseEntity.ok().build();
     }
 }

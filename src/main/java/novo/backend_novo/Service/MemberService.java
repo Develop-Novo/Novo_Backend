@@ -6,7 +6,9 @@ import novo.backend_novo.Domain.Member;
 import novo.backend_novo.Repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +20,7 @@ import static novo.backend_novo.DTO.MemberDTO.*;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final ImageService imageService;
 
     //이메일로 유저 정보 찾아오기
     public InfoResponse getMemberInfoWithEmail(String email){
@@ -63,7 +66,7 @@ public class MemberService {
     public void update(Long id, String name){
         Member member = memberRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("회원 id가 올바르지 않습니다."));
-        member.updateInfo(name);
+        member.updateName(name);
     }
 
     //회원 탈퇴
@@ -72,5 +75,18 @@ public class MemberService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("회원 id가 올바르지 않습니다."));
         memberRepository.delete(member);
+    }
+
+    //프로필 이미지 설정
+    @Transactional
+    public void saveProfile(Long id, MultipartFile profileImg) throws IOException {
+        String uuid = null;
+        if(profileImg.isEmpty())
+            throw new IOException("파일이 올바르지 않습니다.");
+        Member member = memberRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("회원 id가 올바르지 않습니다."));
+        uuid = imageService.uploadImage(profileImg);
+        uuid = imageService.processImage(uuid);
+        member.updateImg(uuid);
     }
 }

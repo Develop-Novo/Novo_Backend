@@ -30,6 +30,7 @@ public class MemberServiceTest {
         assertEquals(memberService.getMemberInfoWithId(idResponse.getId()).getName(),"name");
         assertEquals(memberService.getMemberInfoWithId(idResponse.getId()).getEmail(),"email@gmail.com");
     }
+
     @Test
     void join_and_findByEmail(){
         //given
@@ -40,6 +41,7 @@ public class MemberServiceTest {
         assertEquals(memberService.getMemberInfoWithEmail("email@gmail.com").getName(),"name");
         assertEquals(memberService.getMemberInfoWithEmail("email@gmail.com").getEmail(),"email@gmail.com");
     }
+
     @Test
     void findAll(){
         //given
@@ -91,4 +93,5 @@ public class MemberServiceTest {
                 .password(password)
                 .build();
     }
+
 }
