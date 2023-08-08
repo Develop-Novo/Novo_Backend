@@ -25,7 +25,7 @@ public class StarService {
     private final ContentRepository contentRepository;
 
     @Transactional
-    public void renewRating(Long contentId){
+    private void renewRating(Long contentId){
         List<Star> starList = starRepository.findByContentId(contentId);
         Content content = contentRepository.findById(contentId)
                 .orElseThrow(()-> new IllegalArgumentException("작품 id가 올바르지 않습니다."));

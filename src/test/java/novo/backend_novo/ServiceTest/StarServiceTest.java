@@ -1,127 +1,137 @@
 package novo.backend_novo.ServiceTest;
 
+import novo.backend_novo.DTO.CommonDTO;
+import novo.backend_novo.DTO.ContentDTO;
+import novo.backend_novo.DTO.StarDTO;
 import novo.backend_novo.Domain.Content;
 import novo.backend_novo.Domain.Member;
 import novo.backend_novo.Service.ContentService;
 import novo.backend_novo.Service.MemberService;
 import novo.backend_novo.Service.StarService;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.io.IOException;
 import java.util.List;
 
 import static novo.backend_novo.DTO.CommonDTO.*;
 import static novo.backend_novo.DTO.StarDTO.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
 public class StarServiceTest {
-    @Autowired
-    StarService starService;
-    @Autowired
-    MemberService memberService;
-    @Autowired
-    ContentService contentService;
 
-    Member member1 = getMember("name1","email1@gmail.com","password");
-    Content content1 = getContent("title1","writer","introduction","price","serialDay",
-            LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
-    Member member2 = getMember("name2","email2@gmail.com","password");
-    Content content2 = getContent("title2","writer","introduction","price","serialDay",
-            LocalDate.now(),"genre","keyword1,keyword2","ageRating","platform");
+    @Autowired StarService starService;
+    @Autowired MemberService memberService;
+    @Autowired ContentService contentService;
+
+    Member member1 = Member.builder()
+            .name("member1")
+            .email("email1@gmail.com")
+            .password("password")
+            .build();
+    Member member2 = Member.builder()
+            .name("member2")
+            .email("email2@gmail.com")
+            .password("password")
+            .build();
+    ContentDTO.SaveRequest content1 = ContentDTO.SaveRequest.builder()
+            .title("content1")
+            .genre("genre")
+            .build();
+
+    Long member1Id = null;
+    Long member2Id = null;
+    Long content1Id = null;
+
+    MockMultipartFile image1 = new MockMultipartFile("json", "", "application/json",
+            "{src/main/resources/static/testImg1.jpg}".getBytes());
+    MockMultipartFile image2 = new MockMultipartFile("json", "", "application/json",
+            "{src/main/resources/static/testImg2.jpg}".getBytes());
 
     @BeforeEach
-    void setUp(){
-        memberService.join(member1);
-        contentService.saveContent(content1);
-        memberService.join(member2);
-        contentService.saveContent(content2);
+    void setUp() throws IOException {
+        IdResponse idResponse1 = memberService.join(member1);
+        IdResponse idResponse2 = memberService.join(member2);
+        IdResponse idResponse3 = contentService.saveContent(content1,image1,image2);
+
+        member1Id = idResponse1.getId();
+        member2Id = idResponse2.getId();
+        content1Id = idResponse3.getId();
     }
 
     @Test
     void save_and_findById(){
-        //given & when
-        IdResponse idResponse = getStar(member1,content1,(float)8.5);
+        //given
+        SaveRequest request1 = getStar(member1Id, content1Id, (float)5.3);
+        //when
+        IdResponse starId = starService.saveStar(request1);
         //then
-        assertEquals(8.5, starService.getStarInfoWithId(idResponse.getId()).getStar());
+        assertEquals(starService.getStarInfoWithId(starId.getId()).getStar(),(float)5.3);
     }
 
     @Test
-    void getAllStarsWithContentId(){
+    void findAll(){
         //given
-        IdResponse idResponse1 = getStar(member1,content1,(float)8.5);
-        IdResponse idResponse2 = getStar(member2,content1, (float)5);
-        IdResponse idResponse3 = getStar(member2,content2,(float)7);
+        List<InfoResponse> initInfoList = starService.getAllStarsWithContentId(content1Id);
+
+        SaveRequest request1 = getStar(member1Id, content1Id, (float)8);
+        SaveRequest request2 = getStar(member2Id, content1Id, (float)3);
+
+        starService.saveStar(request1);
+        starService.saveStar(request2);
+
         //when
-        List<InfoResponse> responseList = starService.getAllStarsWithContentId(content1.getId());
+        List<InfoResponse> starInfoList = starService.getAllStarsWithContentId(content1Id);
+
         //then
-        assertEquals(2,responseList.size());
+        assertEquals(2+ initInfoList.size(), starInfoList.size());
     }
 
     @Test
-    void modifyStar(){
+    void modifyStarInfo() {
         //given
-        IdResponse idResponse1 = getStar(member1,content1,(float)8.5);
+        SaveRequest request1 = getStar(member1Id, content1Id, (float)8);
+        IdResponse starId = starService.saveStar(request1);
+        UpdateRequest request = UpdateRequest.builder().star((float)1).build();
         //when
-        starService.update(idResponse1.getId(),(float)4.5);
+        starService.update(starId.getId(),request.getStar());
         //then
-        assertEquals(4.5, starService.getStarInfoWithId(idResponse1.getId()).getStar());
+        assertEquals(starService.getStarInfoWithId(starId.getId()).getStar(),1);
     }
 
     @Test
     void deleteStar(){
         //given
-        IdResponse idResponse1 = getStar(member1,content1,(float)8.5);
-        IdResponse idResponse2 = getStar(member2,content1, (float)5);
+        List<InfoResponse> initInfoList = starService.getAllStarsWithContentId(content1Id);
+
+        SaveRequest request1 = getStar(member1Id, content1Id, (float)8);
+        SaveRequest request2 = getStar(member2Id, content1Id, (float)3);
+
+        IdResponse starId1 = starService.saveStar(request1);
+        IdResponse starId2 = starService.saveStar(request2);
+        List<InfoResponse> starInfoList = starService.getAllStarsWithContentId(content1Id);
+        assertEquals(2+initInfoList.size(), starInfoList.size());
+
         //when
-        List<InfoResponse> responseList = starService.getAllStarsWithContentId(content1.getId());
+        starService.removeStar(starId1.getId());
+        starInfoList = starService.getAllStarsWithContentId(content1Id);
+
         //then
-        assertEquals(2,responseList.size());
-        //given
-        starService.removeStar(idResponse1.getId());
-        //when
-        List<InfoResponse> modifyList = starService.getAllStarsWithContentId(content1.getId());
-        //then
-        assertEquals(1, modifyList.size());
+        assertEquals(1+initInfoList.size(), starInfoList.size());
     }
 
-    private Member getMember(String name, String email, String password){
-        return Member.builder()
-                .name(name)
-                .email(email)
-                .password(password)
-                .build();
-    }
-    private Content getContent( String title, String writer, String introduction,
-                                String price, String serialDay, LocalDate publishedAt,
-                                String genre, String keyword, String ageRating, String platform){
-        return  Content.builder()
-                .title(title)
-                .writer(writer)
-                .introduction(introduction)
-                .price(price)
-                .serialDay(serialDay)
-                .publishedAt(publishedAt)
-                .genre(genre)
-                .keyword(keyword)
-                .ageRating(ageRating)
-                .platform(platform)
-                .build();
-    }
-
-    private IdResponse getStar(Member member, Content content, float star){
-        SaveRequest request = SaveRequest.builder()
-                .memberId(member.getId())
-                .contentId(content.getId())
+    private SaveRequest getStar(Long memberId, Long contentId, float star) {
+        return SaveRequest.builder()
+                .memberId(memberId)
+                .contentId(contentId)
                 .star(star)
                 .build();
-
-        return starService.saveStar(request);
     }
 }
