@@ -9,6 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.IOException;
+
 @ControllerAdvice
 @Slf4j
 public class ExceptionController {
@@ -35,5 +37,13 @@ public class ExceptionController {
         e.printStackTrace();
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(e.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<? extends BasicResponse> IOHandler(IOException e){
+        log.warn("-----IOException-----");
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(new ErrorResponse(e.getMessage()));
     }
 }
